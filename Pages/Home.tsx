@@ -8,7 +8,7 @@ const Home: React.FC = () => {
   return (
     <main className="p-4">
       <h1 className="text-2xl font-bold mb-4">GameHub Dashboard</h1>
-      <SearchBar onSearch={(query) => setSearchTerm(query)} />
+      <SearchBar onSearch={(searchInput) => setSearchTerm(searchInput)} />
       <GameList searchTerm={searchTerm} />
     </main>
   );
