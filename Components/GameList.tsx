@@ -14,8 +14,13 @@ export default function GameList({ searchTerm }: GameListProps) {
         const result = await fetchGames(searchTerm);
         setGames(result);
       } catch (err) {
-        setError("Unable to load games.");
-      } finally {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("Unable to load games.");
+        }
+      }
+      finally {
         setLoading(false);
       }
     };
