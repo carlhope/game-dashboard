@@ -2,11 +2,18 @@ import { useState } from 'react';
 import axios from 'axios';
 import { authService } from '../../Services/AuthService';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../Contexts/AuthContext';
+
+
+
+
 
 export default function Login() {
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
   const navigate = useNavigate();
+  const { setIsAuthenticated} = useAuth();
+
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -19,10 +26,13 @@ export default function Login() {
         email: form.email.trim(),
         password: form.password.trim()
       };
-      const token = await authService.login({ ...payload });
+      await authService.login({ ...payload });
+      setError('');
       alert('Login successful');
+      setIsAuthenticated(true);
       navigate('/games');
     } catch (err: any) {
+      console.error("Login error:", err);
       setError(err.response?.data?.error || 'Login failed');
     }
   };

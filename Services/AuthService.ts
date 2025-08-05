@@ -11,29 +11,38 @@ interface LoginPayload {
   password: string;
 }
 
+const API = axios.create({
+  baseURL: 'http://localhost:3001',
+  withCredentials: true, // 🔑 sends cookies automatically
+});
+
 export const authService = {
   async register(payload: RegisterPayload) {
-    const res = await axios.post('/register', payload);
+    const res = await API.post('/auth/register', payload);
     return res.data;
   },
 
   async login(payload: LoginPayload) {
-    const res = await axios.post('/login', payload);
-    const token = res.data.token;
-    localStorage.setItem('token', token);
-    return token;
+    await API.post('/auth/login', payload);
   },
 
-  logout() {
-    localStorage.removeItem('token');
-    window.location.href = '/login';
+  async logout(): Promise<boolean> {
+    try {
+      const res = await API.post('/auth/logout');
+      return res.status === 200;
+    } catch (err) {
+      console.error("Logout failed:", err);
+      return false;
+    }
   },
 
-  getToken() {
-    return localStorage.getItem('token');
-  },
-
-  isAuthenticated() {
-    return !!localStorage.getItem('token');
+  async refresh(): Promise<string | null> {
+    try {
+      const res = await API.post('/auth/refresh');
+      return res.data.accessToken || null;
+    } catch (err) {
+      console.error("Refresh failed:", err);
+      return null;
+    }
   }
 };

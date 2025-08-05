@@ -1,8 +1,25 @@
-import { authService } from "../../Services/AuthService"
+import { authService } from "../../Services/AuthService";
+import { useAuth } from "../../Contexts/AuthContext";
+
+
+
 
 export default function LogoutButton() {
-  const handleLogout = () => {
-    authService.logout();
+
+const { setIsAuthenticated} = useAuth();
+  const handleLogout = async () => {
+    console.log("Logging out...");
+    try {
+      const success = await authService.logout();
+      if (success) {
+        alert("Logout successful");
+        setIsAuthenticated(false);
+      } else {
+        alert("Logout failed: Server returned error");
+      }
+    } catch (err) {
+      console.error("Logout failed:", err);
+    }
   };
 
   return (
@@ -12,5 +29,6 @@ export default function LogoutButton() {
     >
       Logout
     </button>
+ 
   );
 }
