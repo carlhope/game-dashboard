@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
+import React, { createContext, useContext, useEffect, useState, useMemo } from 'react';
 import axios, {AxiosError} from 'axios';
 
 interface AuthContextType {
@@ -46,18 +46,17 @@ useEffect(() => {
 
   refreshToken();
 }, []);
+const contextValue = useMemo(() => ({
+  isAuthenticated,
+  setIsAuthenticated,
+  accessToken,
+  setAccessToken,
+  loading,
+  setLoading,
+}), [isAuthenticated, accessToken, loading]);
 
   return (
-   <AuthContext.Provider
-  value={{
-    isAuthenticated,
-    setIsAuthenticated, // ✅ Add this
-    accessToken,
-    setAccessToken,
-    loading,
-    setLoading,
-  }}
->
+   <AuthContext.Provider value={contextValue}>
   {children}
 </AuthContext.Provider>
   );
